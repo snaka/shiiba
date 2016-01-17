@@ -32,8 +32,11 @@ gem 'bootstrap-sass', '~> 3.3.6'
 gem 'sass-rails', '>= 3.2'
 gem 'bootswatch-rails'
 
+gem 'qiita'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'pry-rails'
   gem 'byebug'
   gem 'rspec-rails', '~> 3.0'
 end

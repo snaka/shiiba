@@ -24,3 +24,6 @@
 
 # redisのダンプファイル
 dump.rdb
+
+# qiitaトークンなど
+qiita.yml

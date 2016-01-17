@@ -1,0 +1,5 @@
+production:
+  access_token: __qiita_access_token__
+development:
+  access_token: __qiita_access_token__
+
