@@ -13,3 +13,19 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap-sprockets
+//= require_tree .
+//= require_self
+
+$(function () {
+  var $body = $("body");
+  var controller = $body.data("controller").replace(/\//, "_");
+  var action = $body.data("action");
+
+  var activeController = Shiiba[controller];
+
+  if (activeController !== undefined) {
+    if ($.isFunction(activeController[action])) {
+      activeController[action]();
+    }
+  }
+});

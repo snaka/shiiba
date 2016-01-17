@@ -1,12 +1,13 @@
 <div class="jumbotron">
   <h1>Shiiba</h1>
-  <%= form_tag "#", method: :get, class: "form-inline" do %>
+  <%= form_tag(users_path, id: "main-form", class: "form-inline") do %>
     <p>QiitaのユーザIDを入力してください</p>
     <p class="form-group">
-      <input type="text" class="form-controll" id="user_id" placeholder="Qiita user id" />
+      <%= text_field_tag :user_id, "", class: "form-controll", placeholder: "Qiita User ID" %>
     </p>
     <p class="form-group">
-      <button type="submit" class="btn btn-primary">芝を生やす</button>
+      <%= submit_tag "芝を生やす", id: "btn-submit", class: "btn btn-primary" %>
     </p>
   <% end %>
 </div>
+<div id="weed"></div>
