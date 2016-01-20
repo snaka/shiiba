@@ -7,6 +7,7 @@ class UsersController < ApplicationController
 
   def show
     @weed = get_qiita_items(params[:user_id])
-    render layout: false
+    logger.debug "@weed : #{@weed.inspect}"
+    render layout: false, json: @weed
   end
 end
