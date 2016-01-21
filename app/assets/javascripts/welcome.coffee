@@ -28,7 +28,7 @@ class WelcomeController
 
   # 表示する日付の範囲(過去１年間)
   rangeBegin = addDays(new Date, -365)
-  rangeEnd = addDays(new Date, 1)
+  rangeEnd = new Date
   dateRange = d3.time.days(rangeBegin, rangeEnd)
 
   # カレンダのオフセット値を算出する関数
@@ -50,12 +50,11 @@ class WelcomeController
   createColorFunc = (dataset) ->
     _countScale = d3.scale.linear()
                   .domain([1, d3.max(d3.values(dataset))])
-                  .rangeRound([0, 8])
+                  .rangeRound([0, 4])
                   .clamp(true)
     _colorScale = d3.scale.ordinal()
-                  .domain([1, 2, 3, 4, 5, 6, 7, 8, 9])
-                  .range(["#ffffe5","#f7fcb9","#d9f0a3","#addd8e","#78c679",
-                          "#41ab5d","#238443","#006837","#004529"])
+                  .domain([1, 2, 3, 4, 5])
+                  .range(["#ffffcc","#c2e699","#78c679","#31a354","#006837"])
     return (f) -> _colorScale(_countScale(f))
 
   # カレンダー描画
@@ -63,11 +62,9 @@ class WelcomeController
     color = createColorFunc(dataset)
 
     # svg要素の作成
-    svg = d3.select("body")
-            .append("svg")
-              .attr("width", 1000)
-              .attr("height", 300)
-            .append("g")
+    svg = d3.select(".weed")
+    svg.selectAll("*").remove()
+    svg.append("g")
 
     # 日付のフォーマット
     format = d3.time.format("%Y-%m-%d")
