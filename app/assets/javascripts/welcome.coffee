@@ -20,6 +20,10 @@ class QiitaWeed
   # セルの1辺のサイズ
   CELL_SIZE = 15
 
+  # カレンダ表示のマージン
+  MARGIN_LEFT = 25
+  MARGIN_TOP = 15
+
   constructor: ->
     @dataset = null
     @color = null
@@ -35,6 +39,7 @@ class QiitaWeed
   rangeBegin = addDays(new Date, -365)
   rangeEnd = new Date
   dateRange = d3.time.days(rangeBegin, rangeEnd)
+  monthRange = d3.time.months(rangeBegin, rangeEnd)
 
   # カレンダのオフセット値を算出する関数
   createOffsetFunc = ->
@@ -83,8 +88,8 @@ class QiitaWeed
                 .attr("class", "day")
                 .attr("width", CELL_SIZE - 1)
                 .attr("height", CELL_SIZE - 1)
-                .attr("x", (d) -> (d3.time.weekOfYear(d) + offset(d)) * CELL_SIZE)
-                .attr("y", (d) -> d.getDay() * CELL_SIZE)
+                .attr("x", (d) -> (d3.time.weekOfYear(d) + offset(d)) * CELL_SIZE + MARGIN_LEFT)
+                .attr("y", (d) -> d.getDay() * CELL_SIZE + MARGIN_TOP)
                 .attr("fill", "rgb(230,230,230)")
               .datum(format)
 
@@ -97,6 +102,31 @@ class QiitaWeed
         .attr("fill", (d) => @color(dataset[d]))
         .select("title")
         .text((d) -> d + " (投稿:" + dataset[d] + "件)")
+
+    # 曜日のラベル
+    dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    svg.selectAll(".dayLabel")
+       .data([0..6])
+       .enter()
+       .append("text")
+         .attr("class", "dayLabel")
+         .attr("x", 0)
+         .attr("y", (d) -> d * CELL_SIZE + 11 + MARGIN_TOP)
+         .attr("font-size", 11)
+         .attr("fill", "gray")
+         .text((d) -> dayLabels[d])
+    # 月のラベル
+    monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    svg.selectAll(".monthLabel")
+      .data(monthRange)
+      .enter()
+      .append("text")
+        .attr("class", "monthLabel")
+        .attr("x", (d) -> (d3.time.weekOfYear(d) + offset(d)) * CELL_SIZE + MARGIN_LEFT)
+        .attr("y", 11)
+        .attr("font-size", 11)
+        .attr("fill", "gray")
+        .text((d) -> monthLabels[d.getMonth()])
 
 Shiiba.welcome = new WelcomeController
 Shiiba.weed = new QiitaWeed
