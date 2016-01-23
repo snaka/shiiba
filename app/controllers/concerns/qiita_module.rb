@@ -6,7 +6,7 @@ module QiitaModule
 
     page = 1
     item_dates = {}
-    a_year_ago = 1.years.from_now
+    a_year_ago = 1.years.ago
     filled = false
 
     begin
@@ -18,12 +18,13 @@ module QiitaModule
       )
       items_response.body.each do |item|
         date = Date.parse(item["created_at"])
+        break if filled = date < a_year_ago
         item_dates[date] = item_dates.fetch(date, 0) + 1
-        filled = date < a_year_ago
       end
+      break if filled
       page += 1
       sleep 1
-    end while items_response.next_page_url && !filled
+    end while items_response.next_page_url
 
     item_dates
   end
