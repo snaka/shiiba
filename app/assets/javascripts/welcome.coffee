@@ -6,19 +6,24 @@ class WelcomeController
   index: ->
     $("#main-form").submit (e) ->
       url = "/users/" + $("#user_id").val()
-      console.log("url:" + url)
       $.ajax({
         type: "GET",
         url: url,
         data: $("#main-form").serialize(),
         success: (data) ->
           $("#btn-submit").prop("disabled", false)
-          console.log data
-          drawCalendar.call @, data
+          Shiiba.weed.drawCalendar data
       })
       e.preventDefault()
 
+class QiitaWeed
+  # セルの1辺のサイズ
   CELL_SIZE = 15
+
+  constructor: ->
+    @dataset = null
+    @color = null
+    @countScale = null
 
   # 日付の計算
   addDays = (sourceDate, days) ->
@@ -44,22 +49,22 @@ class WelcomeController
         return firstYearOffset
       return lastYearOffset
 
-  offset = createOffsetFunc()
-
   # count数の大きさに応じたcolorを求める関数
-  createColorFunc = (dataset) ->
-    _countScale = d3.scale.linear()
-                  .domain([1, d3.max(d3.values(dataset))])
-                  .rangeRound([0, 4])
-                  .clamp(true)
-    _colorScale = d3.scale.ordinal()
-                  .domain([1, 2, 3, 4, 5])
-                  .range(["#ffffcc","#c2e699","#78c679","#31a354","#006837"])
-    return (f) -> _colorScale(_countScale(f))
+  createColorFunc = (countScaleFunc) =>
+    colorScale = d3.scale.ordinal()
+                  .domain([1, 2, 3])
+                  .range(["#f7fcb9","#addd8e","#31a354"])
+    return (f) -> colorScale(countScaleFunc(f))
 
   # カレンダー描画
-  drawCalendar = (dataset) ->
-    color = createColorFunc(dataset)
+  drawCalendar: (dataset) ->
+    @dataset = dataset
+    @countScale = d3.scale.linear()
+                  .domain([1, d3.max(d3.values(dataset))])
+                  .rangeRound([1, 3])
+                  .clamp(true)
+    @color = createColorFunc(@countScale)
+
 
     # svg要素の作成
     svg = d3.select(".weed")
@@ -70,6 +75,7 @@ class WelcomeController
     format = d3.time.format("%Y-%m-%d")
 
     # 日毎の矩形を生成
+    offset = createOffsetFunc()
     rect = svg.selectAll(".day")
               .data(dateRange)
               .enter()
@@ -88,9 +94,9 @@ class WelcomeController
 
     # 投稿のあった日のツールチップと背景色を設定
     rect.filter((d) -> dataset[d]?)
-        .attr("fill", (d) -> color(dataset[d]))
+        .attr("fill", (d) => @color(dataset[d]))
         .select("title")
         .text((d) -> d + " (投稿:" + dataset[d] + "件)")
 
 Shiiba.welcome = new WelcomeController
-
+Shiiba.weed = new QiitaWeed
